@@ -4,6 +4,7 @@
     import Title from './Title.svelte';
 </script>
 
-<!--Rendering component to root file-->
+<!--Rendering component to root component-->
 <Navbar/>
-<Title/>
+<Title title="add expense"/>
+<Title title="expense list"/>
