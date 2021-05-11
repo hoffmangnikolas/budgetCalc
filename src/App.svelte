@@ -6,5 +6,3 @@
 
 <!--Rendering component to root component-->
 <Navbar/>
-<Title title="add expense"/>
-<Title title="expense list"/>

@@ -528,62 +528,32 @@ var app = (function () {
 
     function create_fragment(ctx) {
     	let navbar;
-    	let t0;
-    	let title0;
-    	let t1;
-    	let title1;
     	let current;
     	navbar = new Navbar({ $$inline: true });
-
-    	title0 = new Title({
-    			props: { title: "add expense" },
-    			$$inline: true
-    		});
-
-    	title1 = new Title({
-    			props: { title: "expense list" },
-    			$$inline: true
-    		});
 
     	const block = {
     		c: function create() {
     			create_component(navbar.$$.fragment);
-    			t0 = space();
-    			create_component(title0.$$.fragment);
-    			t1 = space();
-    			create_component(title1.$$.fragment);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			mount_component(navbar, target, anchor);
-    			insert_dev(target, t0, anchor);
-    			mount_component(title0, target, anchor);
-    			insert_dev(target, t1, anchor);
-    			mount_component(title1, target, anchor);
     			current = true;
     		},
     		p: noop,
     		i: function intro(local) {
     			if (current) return;
     			transition_in(navbar.$$.fragment, local);
-    			transition_in(title0.$$.fragment, local);
-    			transition_in(title1.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(navbar.$$.fragment, local);
-    			transition_out(title0.$$.fragment, local);
-    			transition_out(title1.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			destroy_component(navbar, detaching);
-    			if (detaching) detach_dev(t0);
-    			destroy_component(title0, detaching);
-    			if (detaching) detach_dev(t1);
-    			destroy_component(title1, detaching);
     		}
     	};
 
