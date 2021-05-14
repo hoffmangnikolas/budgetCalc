@@ -5,8 +5,13 @@
     import Navbar from './Navbar.svelte';
     import ExpenseData from './expenses';
     import ExpenseList from './ExpenseList.svelte';
+    import Totals from './Totals.svelte';
     //setting up local variables to use data in root
     let expenses = [...ExpenseData]
+    //reactive from Svelte.js
+    $: total = expenses.reduce((acc, curr)=>{
+        return (acc += curr.amount)
+    }, 0)
     //functions to allow expenses to be deleted using JS
    function removeExpense(id) {
        expenses = expenses.filter(item => item.id !== id);
@@ -21,6 +26,7 @@
 <!--Rendering component to root component-->
 <Navbar />
 <main class="content">
+    <Totals title="total expenses" {total} />
     <ExpenseList {expenses} />
     <button type="button" class="btn btn-primary btn-block" on:click={clearExpenses}>
         clear expenses
