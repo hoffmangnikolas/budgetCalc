@@ -6,6 +6,7 @@
     import ExpenseData from './expenses';
     import ExpenseList from './ExpenseList.svelte';
     import Totals from './Totals.svelte';
+    import ExpenseForm from './ExpenseForm.svelte';
     //setting up local variables to use data in root
     let expenses = [...ExpenseData]
     //reactive from Svelte.js
@@ -26,6 +27,7 @@
 <!--Rendering component to root component-->
 <Navbar />
 <main class="content">
+    <ExpenseForm />
     <Totals title="total expenses" {total} />
     <ExpenseList {expenses} />
     <button type="button" class="btn btn-primary btn-block" on:click={clearExpenses}>
