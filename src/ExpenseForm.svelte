@@ -1,13 +1,22 @@
 <script>
+//props
     import Title from './Title.svelte';
+    export let name = '';
+    export let amount = null;
     export let addExpense;
-
-    let name = '';
-    let amount = null;
+    export let isEditing;
+    export let editExpense;
+//reactive
     $: isEmpty = !name || !amount;
 
+//functions
     function handleSubmit() {
-        addExpense({name, amount});
+        if(isEditing) {
+            editExpense({name, amount})
+        }
+        else {
+            addExpense({name, amount});
+        }
         name = '';
         amount = null;
     }
@@ -30,7 +39,7 @@
             </p>
         {/if}
         <button type="submit" class="btn btn-block" class:disabled={isEmpty} disabled={isEmpty}>
-            add expense
+            {#if isEditing}edit expense {:else}add expense {/if}
         </button>
          <button type="button" class="close-btn">
             <i class="fas fa-times" />

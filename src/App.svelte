@@ -1,7 +1,7 @@
 <script>
     //Importing element from Svelte.js library
     import {setContext} from 'svelte';
-    //Importing component to root file from component file
+    //Importing prop/component to root file from component file
     import Navbar from './Navbar.svelte';
     import ExpenseData from './expenses';
     import ExpenseList from './ExpenseList.svelte';
@@ -16,6 +16,7 @@
     let setId = null;
 
     //reactive from Svelte.js
+    $: isEditing = setId?true:false;
     $: total = expenses.reduce((acc, curr)=>{
         return (acc += curr.amount);
     }, 0);
@@ -39,7 +40,9 @@
        setName = expense.name;
        setAmount = expense.amount;
    }
-
+    function editExpense({name, amount}) {
+        console.log({name, amount});
+    }
    //Context
    setContext("remove", removeExpense);
    setContext("modify", setModifiedExpense);
@@ -48,7 +51,7 @@
 <!--Rendering component to root component-->
 <Navbar />
 <main class="content">
-    <ExpenseForm {addExpense} />
+    <ExpenseForm {addExpense} name={setName} amount={setAmount} {isEditing} {editExpense} />
     <Totals title="total expenses" {total} />
     <ExpenseList {expenses} />
     <button type="button" class="btn btn-primary btn-block" on:click={clearExpenses}>
