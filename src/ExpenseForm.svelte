@@ -1,12 +1,13 @@
 <script>
     import Title from './Title.svelte';
+    export let addExpense;
 
     let name = '';
     let amount = null;
     $: isEmpty = !name || !amount;
 
     function handleSubmit() {
-        console.log({name, amount});
+        addExpense({name, amount});
         name = '';
         amount = null;
     }
