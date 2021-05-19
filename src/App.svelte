@@ -6,6 +6,7 @@
     import ExpenseList from './ExpenseList.svelte';
     import Totals from './Totals.svelte';
     import ExpenseForm from './ExpenseForm.svelte';
+    import Modal from './Modal.svelte';
     //import ExpenseData from './expenses';
     
     //setting up local variable to use data the user input
@@ -85,14 +86,15 @@
 <Navbar {showForm} />
 <main class="content">
     {#if isFormOpen}
-        <ExpenseForm 
+        <Modal>
+            <ExpenseForm 
             {addExpense} 
             name={setName} 
             amount={setAmount} 
             {isEditing} 
             {editExpense}
-            {hideForm} 
-        />
+            {hideForm} />
+        </Modal>
     {/if}
     <Totals title="total expenses" {total} />
     <ExpenseList {expenses} />

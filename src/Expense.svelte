@@ -1,5 +1,6 @@
 <script>
 //props
+    import { blur, slide, scale, fade, fly } from "svelte/transition";
     import { getContext } from "svelte";
     export let id;
     export let name = "";
@@ -21,12 +22,12 @@
 <article class="single-expense">
     <div class="expense-info">
         <h2>
-            {name} <button class="amount-btn" on:click|once="{toggleAmount}">
+            {name} <button class="amount-btn" on:click="{toggleAmount}">
                 <i class="fas fa-caret-down" />
             </button>
         </h2>
         {#if displayAmount}
-            <h4>amount : ${amount}</h4>
+            <h4 transition:blur>amount : ${amount}</h4>
         {/if}
     </div>
     <div class="expense-button">
