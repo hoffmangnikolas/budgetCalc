@@ -102,6 +102,18 @@ var app = (function () {
             throw new Error('Function called outside component initialization');
         return current_component;
     }
+    function beforeUpdate(fn) {
+        get_current_component().$$.before_update.push(fn);
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
+    function afterUpdate(fn) {
+        get_current_component().$$.after_update.push(fn);
+    }
+    function onDestroy(fn) {
+        get_current_component().$$.on_destroy.push(fn);
+    }
     function setContext(key, context) {
         get_current_component().$$.context.set(key, context);
     }
@@ -473,6 +485,8 @@ var app = (function () {
     	let button;
     	let i;
     	let t2;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
@@ -485,16 +499,16 @@ var app = (function () {
     			i = element("i");
     			t2 = text("\n            add expense");
     			attr_dev(h1, "class", "nav-title");
-    			add_location(h1, file$6, 3, 8, 79);
+    			add_location(h1, file$6, 7, 8, 124);
     			attr_dev(i, "class", "far fa-plus-square");
-    			add_location(i, file$6, 5, 12, 183);
+    			add_location(i, file$6, 9, 12, 248);
     			attr_dev(button, "type", "button");
     			attr_dev(button, "class", "nav-btn");
-    			add_location(button, file$6, 4, 8, 132);
+    			add_location(button, file$6, 8, 8, 177);
     			attr_dev(div, "class", "nav-center");
-    			add_location(div, file$6, 2, 4, 46);
+    			add_location(div, file$6, 6, 4, 91);
     			attr_dev(nav, "class", "nav");
-    			add_location(nav, file$6, 1, 0, 24);
+    			add_location(nav, file$6, 5, 0, 69);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -507,12 +521,31 @@ var app = (function () {
     			append_dev(div, button);
     			append_dev(button, i);
     			append_dev(button, t2);
+
+    			if (!mounted) {
+    				dispose = listen_dev(
+    					button,
+    					"click",
+    					function () {
+    						if (is_function(/*showForm*/ ctx[0])) /*showForm*/ ctx[0].apply(this, arguments);
+    					},
+    					false,
+    					false,
+    					false
+    				);
+
+    				mounted = true;
+    			}
     		},
-    		p: noop,
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(nav);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -527,22 +560,37 @@ var app = (function () {
     	return block;
     }
 
-    function instance$6($$self, $$props) {
+    function instance$6($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Navbar", slots, []);
-    	const writable_props = [];
+    	let { showForm } = $$props;
+    	const writable_props = ["showForm"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Navbar> was created with unknown prop '${key}'`);
     	});
 
-    	return [];
+    	$$self.$$set = $$props => {
+    		if ("showForm" in $$props) $$invalidate(0, showForm = $$props.showForm);
+    	};
+
+    	$$self.$capture_state = () => ({ showForm });
+
+    	$$self.$inject_state = $$props => {
+    		if ("showForm" in $$props) $$invalidate(0, showForm = $$props.showForm);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [showForm];
     }
 
     class Navbar extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$6, create_fragment$6, safe_not_equal, {});
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { showForm: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -550,31 +598,23 @@ var app = (function () {
     			options,
     			id: create_fragment$6.name
     		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*showForm*/ ctx[0] === undefined && !("showForm" in props)) {
+    			console.warn("<Navbar> was created without expected prop 'showForm'");
+    		}
+    	}
+
+    	get showForm() {
+    		throw new Error("<Navbar>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set showForm(value) {
+    		throw new Error("<Navbar>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
-
-    var ExpenseData = [
-      {
-        id: Math.random() * Date.now(),
-        name: "rent",
-        amount: 2300
-      },
-      {
-        id: Math.random() * Date.now(),
-        name: "car payment",
-        amount: 400
-      },
-      {
-        id: Math.random() * Date.now(),
-        name: "student loan",
-        amount: 400
-      },
-      {
-        id: Math.random() * Date.now(),
-        name: "credit card",
-        amount: 2000
-      }
-    ];
 
     /* src/Title.svelte generated by Svelte v3.38.2 */
 
@@ -676,7 +716,7 @@ var app = (function () {
     const file$4 = "src/Expense.svelte";
 
     // (28:8) {#if displayAmount}
-    function create_if_block$1(ctx) {
+    function create_if_block$2(ctx) {
     	let h4;
     	let t0;
     	let t1;
@@ -703,7 +743,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block$2.name,
     		type: "if",
     		source: "(28:8) {#if displayAmount}",
     		ctx
@@ -730,7 +770,7 @@ var app = (function () {
     	let i2;
     	let mounted;
     	let dispose;
-    	let if_block = /*displayAmount*/ ctx[3] && create_if_block$1(ctx);
+    	let if_block = /*displayAmount*/ ctx[3] && create_if_block$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -808,7 +848,7 @@ var app = (function () {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
-    					if_block = create_if_block$1(ctx);
+    					if_block = create_if_block$2(ctx);
     					if_block.c();
     					if_block.m(div0, null);
     				}
@@ -1354,9 +1394,11 @@ var app = (function () {
     }
 
     /* src/ExpenseForm.svelte generated by Svelte v3.38.2 */
+
+    const { console: console_1$1 } = globals;
     const file$1 = "src/ExpenseForm.svelte";
 
-    // (36:8) {#if isEmpty}
+    // (56:8) {#if isEmpty}
     function create_if_block_1(ctx) {
     	let p;
 
@@ -1365,7 +1407,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "please fill out all form fields";
     			attr_dev(p, "class", "form-empty");
-    			add_location(p, file$1, 36, 12, 964);
+    			add_location(p, file$1, 56, 12, 1365);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1379,14 +1421,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(36:8) {#if isEmpty}",
+    		source: "(56:8) {#if isEmpty}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:40) {:else}
+    // (62:40) {:else}
     function create_else_block(ctx) {
     	let t;
 
@@ -1406,15 +1448,15 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(42:40) {:else}",
+    		source: "(62:40) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:12) {#if isEditing}
-    function create_if_block(ctx) {
+    // (62:12) {#if isEditing}
+    function create_if_block$1(ctx) {
     	let t;
 
     	const block = {
@@ -1431,9 +1473,9 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block.name,
+    		id: create_if_block$1.name,
     		type: "if",
-    		source: "(42:12) {#if isEditing}",
+    		source: "(62:12) {#if isEditing}",
     		ctx
     	});
 
@@ -1470,10 +1512,10 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	let if_block0 = /*isEmpty*/ ctx[3] && create_if_block_1(ctx);
+    	let if_block0 = /*isEmpty*/ ctx[4] && create_if_block_1(ctx);
 
     	function select_block_type(ctx, dirty) {
-    		if (/*isEditing*/ ctx[2]) return create_if_block;
+    		if (/*isEditing*/ ctx[2]) return create_if_block$1;
     		return create_else_block;
     	}
 
@@ -1507,33 +1549,33 @@ var app = (function () {
     			i = element("i");
     			t9 = text("\n            close");
     			attr_dev(label0, "for", "name");
-    			add_location(label0, file$1, 28, 12, 657);
+    			add_location(label0, file$1, 48, 12, 1058);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "id", "name");
-    			add_location(input0, file$1, 29, 12, 700);
+    			add_location(input0, file$1, 49, 12, 1101);
     			attr_dev(div0, "class", "form-control");
-    			add_location(div0, file$1, 27, 8, 618);
+    			add_location(div0, file$1, 47, 8, 1019);
     			attr_dev(label1, "for", "amount");
-    			add_location(label1, file$1, 32, 12, 812);
+    			add_location(label1, file$1, 52, 12, 1213);
     			attr_dev(input1, "type", "number");
     			attr_dev(input1, "id", "amount");
-    			add_location(input1, file$1, 33, 12, 859);
+    			add_location(input1, file$1, 53, 12, 1260);
     			attr_dev(div1, "class", "form-control");
-    			add_location(div1, file$1, 31, 8, 773);
+    			add_location(div1, file$1, 51, 8, 1174);
     			attr_dev(button0, "type", "submit");
     			attr_dev(button0, "class", "btn btn-block");
-    			button0.disabled = /*isEmpty*/ ctx[3];
-    			toggle_class(button0, "disabled", /*isEmpty*/ ctx[3]);
-    			add_location(button0, file$1, 40, 8, 1074);
+    			button0.disabled = /*isEmpty*/ ctx[4];
+    			toggle_class(button0, "disabled", /*isEmpty*/ ctx[4]);
+    			add_location(button0, file$1, 60, 8, 1475);
     			attr_dev(i, "class", "fas fa-times");
-    			add_location(i, file$1, 44, 12, 1308);
+    			add_location(i, file$1, 64, 12, 1729);
     			attr_dev(button1, "type", "button");
     			attr_dev(button1, "class", "close-btn");
-    			add_location(button1, file$1, 43, 9, 1255);
+    			add_location(button1, file$1, 63, 9, 1656);
     			attr_dev(form, "class", "expense-form");
-    			add_location(form, file$1, 26, 4, 542);
+    			add_location(form, file$1, 46, 4, 943);
     			attr_dev(section, "class", "form");
-    			add_location(section, file$1, 24, 0, 481);
+    			add_location(section, file$1, 44, 0, 882);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1567,15 +1609,27 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[7]),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[8]),
-    					listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[4]), false, true, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[8]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[9]),
+    					listen_dev(
+    						button1,
+    						"click",
+    						function () {
+    							if (is_function(/*hideForm*/ ctx[3])) /*hideForm*/ ctx[3].apply(this, arguments);
+    						},
+    						false,
+    						false,
+    						false
+    					),
+    					listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[5]), false, true, false)
     				];
 
     				mounted = true;
     			}
     		},
-    		p: function update(ctx, [dirty]) {
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+
     			if (dirty & /*name*/ 1 && input0.value !== /*name*/ ctx[0]) {
     				set_input_value(input0, /*name*/ ctx[0]);
     			}
@@ -1584,7 +1638,7 @@ var app = (function () {
     				set_input_value(input1, /*amount*/ ctx[1]);
     			}
 
-    			if (/*isEmpty*/ ctx[3]) {
+    			if (/*isEmpty*/ ctx[4]) {
     				if (if_block0) ; else {
     					if_block0 = create_if_block_1(ctx);
     					if_block0.c();
@@ -1605,12 +1659,12 @@ var app = (function () {
     				}
     			}
 
-    			if (!current || dirty & /*isEmpty*/ 8) {
-    				prop_dev(button0, "disabled", /*isEmpty*/ ctx[3]);
+    			if (!current || dirty & /*isEmpty*/ 16) {
+    				prop_dev(button0, "disabled", /*isEmpty*/ ctx[4]);
     			}
 
-    			if (dirty & /*isEmpty*/ 8) {
-    				toggle_class(button0, "disabled", /*isEmpty*/ ctx[3]);
+    			if (dirty & /*isEmpty*/ 16) {
+    				toggle_class(button0, "disabled", /*isEmpty*/ ctx[4]);
     			}
     		},
     		i: function intro(local) {
@@ -1652,8 +1706,25 @@ var app = (function () {
     	let { addExpense } = $$props;
     	let { isEditing } = $$props;
     	let { editExpense } = $$props;
+    	let { hideForm } = $$props;
 
     	//functions
+    	onMount(() => {
+    		console.log("form has mounted");
+    	});
+
+    	onDestroy(() => {
+    		console.log("form is hidden");
+    	});
+
+    	beforeUpdate(() => {
+    		console.count("before update");
+    	});
+
+    	afterUpdate(() => {
+    		console.count("after update");
+    	});
+
     	function handleSubmit() {
     		if (isEditing) {
     			editExpense({ name, amount });
@@ -1665,10 +1736,10 @@ var app = (function () {
     		$$invalidate(1, amount = null);
     	}
 
-    	const writable_props = ["name", "amount", "addExpense", "isEditing", "editExpense"];
+    	const writable_props = ["name", "amount", "addExpense", "isEditing", "editExpense", "hideForm"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ExpenseForm> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$1.warn(`<ExpenseForm> was created with unknown prop '${key}'`);
     	});
 
     	function input0_input_handler() {
@@ -1684,18 +1755,24 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
     		if ("amount" in $$props) $$invalidate(1, amount = $$props.amount);
-    		if ("addExpense" in $$props) $$invalidate(5, addExpense = $$props.addExpense);
+    		if ("addExpense" in $$props) $$invalidate(6, addExpense = $$props.addExpense);
     		if ("isEditing" in $$props) $$invalidate(2, isEditing = $$props.isEditing);
-    		if ("editExpense" in $$props) $$invalidate(6, editExpense = $$props.editExpense);
+    		if ("editExpense" in $$props) $$invalidate(7, editExpense = $$props.editExpense);
+    		if ("hideForm" in $$props) $$invalidate(3, hideForm = $$props.hideForm);
     	};
 
     	$$self.$capture_state = () => ({
+    		onMount,
+    		onDestroy,
+    		beforeUpdate,
+    		afterUpdate,
     		Title,
     		name,
     		amount,
     		addExpense,
     		isEditing,
     		editExpense,
+    		hideForm,
     		handleSubmit,
     		isEmpty
     	});
@@ -1703,10 +1780,11 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
     		if ("amount" in $$props) $$invalidate(1, amount = $$props.amount);
-    		if ("addExpense" in $$props) $$invalidate(5, addExpense = $$props.addExpense);
+    		if ("addExpense" in $$props) $$invalidate(6, addExpense = $$props.addExpense);
     		if ("isEditing" in $$props) $$invalidate(2, isEditing = $$props.isEditing);
-    		if ("editExpense" in $$props) $$invalidate(6, editExpense = $$props.editExpense);
-    		if ("isEmpty" in $$props) $$invalidate(3, isEmpty = $$props.isEmpty);
+    		if ("editExpense" in $$props) $$invalidate(7, editExpense = $$props.editExpense);
+    		if ("hideForm" in $$props) $$invalidate(3, hideForm = $$props.hideForm);
+    		if ("isEmpty" in $$props) $$invalidate(4, isEmpty = $$props.isEmpty);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1716,7 +1794,7 @@ var app = (function () {
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*name, amount*/ 3) {
     			//reactive
-    			$$invalidate(3, isEmpty = !name || !amount);
+    			$$invalidate(4, isEmpty = !name || !amount);
     		}
     	};
 
@@ -1724,6 +1802,7 @@ var app = (function () {
     		name,
     		amount,
     		isEditing,
+    		hideForm,
     		isEmpty,
     		handleSubmit,
     		addExpense,
@@ -1740,9 +1819,10 @@ var app = (function () {
     		init(this, options, instance$1, create_fragment$1, safe_not_equal, {
     			name: 0,
     			amount: 1,
-    			addExpense: 5,
+    			addExpense: 6,
     			isEditing: 2,
-    			editExpense: 6
+    			editExpense: 7,
+    			hideForm: 3
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -1755,16 +1835,20 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*addExpense*/ ctx[5] === undefined && !("addExpense" in props)) {
-    			console.warn("<ExpenseForm> was created without expected prop 'addExpense'");
+    		if (/*addExpense*/ ctx[6] === undefined && !("addExpense" in props)) {
+    			console_1$1.warn("<ExpenseForm> was created without expected prop 'addExpense'");
     		}
 
     		if (/*isEditing*/ ctx[2] === undefined && !("isEditing" in props)) {
-    			console.warn("<ExpenseForm> was created without expected prop 'isEditing'");
+    			console_1$1.warn("<ExpenseForm> was created without expected prop 'isEditing'");
     		}
 
-    		if (/*editExpense*/ ctx[6] === undefined && !("editExpense" in props)) {
-    			console.warn("<ExpenseForm> was created without expected prop 'editExpense'");
+    		if (/*editExpense*/ ctx[7] === undefined && !("editExpense" in props)) {
+    			console_1$1.warn("<ExpenseForm> was created without expected prop 'editExpense'");
+    		}
+
+    		if (/*hideForm*/ ctx[3] === undefined && !("hideForm" in props)) {
+    			console_1$1.warn("<ExpenseForm> was created without expected prop 'hideForm'");
     		}
     	}
 
@@ -1807,6 +1891,14 @@ var app = (function () {
     	set editExpense(value) {
     		throw new Error("<ExpenseForm>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get hideForm() {
+    		throw new Error("<ExpenseForm>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set hideForm(value) {
+    		throw new Error("<ExpenseForm>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/App.svelte generated by Svelte v3.38.2 */
@@ -1814,11 +1906,67 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
+    // (87:4) {#if isFormOpen}
+    function create_if_block(ctx) {
+    	let expenseform;
+    	let current;
+
+    	expenseform = new ExpenseForm({
+    			props: {
+    				addExpense: /*addExpense*/ ctx[9],
+    				name: /*setName*/ ctx[1],
+    				amount: /*setAmount*/ ctx[2],
+    				isEditing: /*isEditing*/ ctx[4],
+    				editExpense: /*editExpense*/ ctx[10],
+    				hideForm: /*hideForm*/ ctx[7]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(expenseform.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(expenseform, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const expenseform_changes = {};
+    			if (dirty & /*setName*/ 2) expenseform_changes.name = /*setName*/ ctx[1];
+    			if (dirty & /*setAmount*/ 4) expenseform_changes.amount = /*setAmount*/ ctx[2];
+    			if (dirty & /*isEditing*/ 16) expenseform_changes.isEditing = /*isEditing*/ ctx[4];
+    			expenseform.$set(expenseform_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(expenseform.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(expenseform.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(expenseform, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(87:4) {#if isFormOpen}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
     function create_fragment(ctx) {
     	let navbar;
     	let t0;
     	let main;
-    	let expenseform;
     	let t1;
     	let totals;
     	let t2;
@@ -1828,23 +1976,18 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	navbar = new Navbar({ $$inline: true });
 
-    	expenseform = new ExpenseForm({
-    			props: {
-    				addExpense: /*addExpense*/ ctx[6],
-    				name: /*setName*/ ctx[1],
-    				amount: /*setAmount*/ ctx[2],
-    				isEditing: /*isEditing*/ ctx[3],
-    				editExpense
-    			},
+    	navbar = new Navbar({
+    			props: { showForm: /*showForm*/ ctx[6] },
     			$$inline: true
     		});
+
+    	let if_block = /*isFormOpen*/ ctx[3] && create_if_block(ctx);
 
     	totals = new Totals({
     			props: {
     				title: "total expenses",
-    				total: /*total*/ ctx[4]
+    				total: /*total*/ ctx[5]
     			},
     			$$inline: true
     		});
@@ -1859,7 +2002,7 @@ var app = (function () {
     			create_component(navbar.$$.fragment);
     			t0 = space();
     			main = element("main");
-    			create_component(expenseform.$$.fragment);
+    			if (if_block) if_block.c();
     			t1 = space();
     			create_component(totals.$$.fragment);
     			t2 = space();
@@ -1869,9 +2012,9 @@ var app = (function () {
     			button.textContent = "clear expenses";
     			attr_dev(button, "type", "button");
     			attr_dev(button, "class", "btn btn-primary btn-block");
-    			add_location(button, file, 56, 4, 1717);
+    			add_location(button, file, 98, 4, 2742);
     			attr_dev(main, "class", "content");
-    			add_location(main, file, 52, 0, 1520);
+    			add_location(main, file, 85, 0, 2413);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1880,7 +2023,7 @@ var app = (function () {
     			mount_component(navbar, target, anchor);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, main, anchor);
-    			mount_component(expenseform, main, null);
+    			if (if_block) if_block.m(main, null);
     			append_dev(main, t1);
     			mount_component(totals, main, null);
     			append_dev(main, t2);
@@ -1890,18 +2033,36 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*clearExpenses*/ ctx[5], false, false, false);
+    				dispose = listen_dev(button, "click", /*clearExpenses*/ ctx[8], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			const expenseform_changes = {};
-    			if (dirty & /*setName*/ 2) expenseform_changes.name = /*setName*/ ctx[1];
-    			if (dirty & /*setAmount*/ 4) expenseform_changes.amount = /*setAmount*/ ctx[2];
-    			if (dirty & /*isEditing*/ 8) expenseform_changes.isEditing = /*isEditing*/ ctx[3];
-    			expenseform.$set(expenseform_changes);
+    			if (/*isFormOpen*/ ctx[3]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+
+    					if (dirty & /*isFormOpen*/ 8) {
+    						transition_in(if_block, 1);
+    					}
+    				} else {
+    					if_block = create_if_block(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(main, t1);
+    				}
+    			} else if (if_block) {
+    				group_outros();
+
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
+    				});
+
+    				check_outros();
+    			}
+
     			const totals_changes = {};
-    			if (dirty & /*total*/ 16) totals_changes.total = /*total*/ ctx[4];
+    			if (dirty & /*total*/ 32) totals_changes.total = /*total*/ ctx[5];
     			totals.$set(totals_changes);
     			const expenselist_changes = {};
     			if (dirty & /*expenses*/ 1) expenselist_changes.expenses = /*expenses*/ ctx[0];
@@ -1910,14 +2071,14 @@ var app = (function () {
     		i: function intro(local) {
     			if (current) return;
     			transition_in(navbar.$$.fragment, local);
-    			transition_in(expenseform.$$.fragment, local);
+    			transition_in(if_block);
     			transition_in(totals.$$.fragment, local);
     			transition_in(expenselist.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(navbar.$$.fragment, local);
-    			transition_out(expenseform.$$.fragment, local);
+    			transition_out(if_block);
     			transition_out(totals.$$.fragment, local);
     			transition_out(expenselist.$$.fragment, local);
     			current = false;
@@ -1926,7 +2087,7 @@ var app = (function () {
     			destroy_component(navbar, detaching);
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(main);
-    			destroy_component(expenseform);
+    			if (if_block) if_block.d();
     			destroy_component(totals);
     			destroy_component(expenselist);
     			mounted = false;
@@ -1945,16 +2106,12 @@ var app = (function () {
     	return block;
     }
 
-    function editExpense({ name, amount }) {
-    	console.log({ name, amount });
-    }
-
     function instance($$self, $$props, $$invalidate) {
     	let isEditing;
     	let total;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
-    	let expenses = [...ExpenseData];
+    	let expenses = [];
 
     	//setting up editing variables
     	let setName = "";
@@ -1962,7 +2119,21 @@ var app = (function () {
     	let setAmount = null;
     	let setId = null;
 
+    	//setting up toggle form varibles
+    	let isFormOpen = false;
+
     	//functions
+    	function showForm() {
+    		$$invalidate(3, isFormOpen = true);
+    	}
+
+    	function hideForm() {
+    		$$invalidate(3, isFormOpen = false);
+    		$$invalidate(1, setName = "");
+    		$$invalidate(2, setAmount = null);
+    		$$invalidate(11, setId = null);
+    	}
+
     	function removeExpense(id) {
     		$$invalidate(0, expenses = expenses.filter(item => item.id !== id));
     	}
@@ -1983,15 +2154,46 @@ var app = (function () {
 
     	function setModifiedExpense(id) {
     		let expense = expenses.find(item => item.id === id);
-    		$$invalidate(7, setId = expense.id);
+    		$$invalidate(11, setId = expense.id);
     		$$invalidate(1, setName = expense.name);
     		$$invalidate(2, setAmount = expense.amount);
+    		showForm();
+    	}
+
+    	function editExpense({ name, amount }) {
+    		$$invalidate(0, expenses = expenses.map(item => {
+    			return item.id === setId
+    			? { ...item, name, amount }
+    			: { ...item };
+    		}));
+
+    		$$invalidate(11, setId = null);
+    		$$invalidate(2, setAmount = null);
+    		$$invalidate(1, setName = "");
     	}
 
     	//Context
     	setContext("remove", removeExpense);
 
     	setContext("modify", setModifiedExpense);
+
+    	//Local storage
+    	function setLocalStorage() {
+    		localStorage.setItem("expenses", JSON.stringify(expenses));
+    	}
+
+    	//lifecycle functions used to grab items from local storage
+    	onMount(() => {
+    		$$invalidate(0, expenses = localStorage.getItem("expenses")
+    		? JSON.parse(localStorage.getItem("expenses"))
+    		: []);
+    	});
+
+    	afterUpdate(() => {
+    		console.log("after update");
+    		setLocalStorage();
+    	});
+
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
@@ -2000,8 +2202,9 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		setContext,
+    		onMount,
+    		afterUpdate,
     		Navbar,
-    		ExpenseData,
     		ExpenseList,
     		Totals,
     		ExpenseForm,
@@ -2009,11 +2212,15 @@ var app = (function () {
     		setName,
     		setAmount,
     		setId,
+    		isFormOpen,
+    		showForm,
+    		hideForm,
     		removeExpense,
     		clearExpenses,
     		addExpense,
     		setModifiedExpense,
     		editExpense,
+    		setLocalStorage,
     		isEditing,
     		total
     	});
@@ -2022,9 +2229,10 @@ var app = (function () {
     		if ("expenses" in $$props) $$invalidate(0, expenses = $$props.expenses);
     		if ("setName" in $$props) $$invalidate(1, setName = $$props.setName);
     		if ("setAmount" in $$props) $$invalidate(2, setAmount = $$props.setAmount);
-    		if ("setId" in $$props) $$invalidate(7, setId = $$props.setId);
-    		if ("isEditing" in $$props) $$invalidate(3, isEditing = $$props.isEditing);
-    		if ("total" in $$props) $$invalidate(4, total = $$props.total);
+    		if ("setId" in $$props) $$invalidate(11, setId = $$props.setId);
+    		if ("isFormOpen" in $$props) $$invalidate(3, isFormOpen = $$props.isFormOpen);
+    		if ("isEditing" in $$props) $$invalidate(4, isEditing = $$props.isEditing);
+    		if ("total" in $$props) $$invalidate(5, total = $$props.total);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -2032,13 +2240,13 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*setId*/ 128) {
+    		if ($$self.$$.dirty & /*setId*/ 2048) {
     			//reactive from Svelte.js
-    			$$invalidate(3, isEditing = setId ? true : false);
+    			$$invalidate(4, isEditing = setId ? true : false);
     		}
 
     		if ($$self.$$.dirty & /*expenses*/ 1) {
-    			$$invalidate(4, total = expenses.reduce(
+    			$$invalidate(5, total = expenses.reduce(
     				(acc, curr) => {
     					return acc += curr.amount;
     				},
@@ -2051,10 +2259,14 @@ var app = (function () {
     		expenses,
     		setName,
     		setAmount,
+    		isFormOpen,
     		isEditing,
     		total,
+    		showForm,
+    		hideForm,
     		clearExpenses,
     		addExpense,
+    		editExpense,
     		setId
     	];
     }
