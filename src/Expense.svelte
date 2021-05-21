@@ -12,7 +12,7 @@
     const setModifiedExpense = getContext("modify");
 
 //functions
-    function toggleAmount (){
+    function toggleAmount () {
         displayAmount = !displayAmount;
     }
 

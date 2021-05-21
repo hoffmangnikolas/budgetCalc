@@ -1066,7 +1066,7 @@ var app = (function () {
     			h4 = element("h4");
     			t0 = text("amount : $");
     			t1 = text(/*amount*/ ctx[2]);
-    			add_location(h4, file$5, 29, 12, 730);
+    			add_location(h4, file$5, 29, 12, 731);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h4, anchor);
@@ -1149,24 +1149,24 @@ var app = (function () {
     			button2 = element("button");
     			i2 = element("i");
     			attr_dev(i0, "class", "fas fa-caret-down");
-    			add_location(i0, file$5, 25, 16, 622);
+    			add_location(i0, file$5, 25, 16, 623);
     			attr_dev(button0, "class", "amount-btn");
-    			add_location(button0, file$5, 24, 19, 552);
-    			add_location(h2, file$5, 23, 8, 528);
+    			add_location(button0, file$5, 24, 19, 553);
+    			add_location(h2, file$5, 23, 8, 529);
     			attr_dev(div0, "class", "expense-info");
-    			add_location(div0, file$5, 22, 4, 493);
+    			add_location(div0, file$5, 22, 4, 494);
     			attr_dev(i1, "class", "fas fa-pen");
-    			add_location(i1, file$5, 34, 12, 932);
+    			add_location(i1, file$5, 34, 12, 933);
     			attr_dev(button1, "class", "expense-btn edit-btn");
-    			add_location(button1, file$5, 33, 8, 840);
+    			add_location(button1, file$5, 33, 8, 841);
     			attr_dev(i2, "class", "fas fa-trash");
-    			add_location(i2, file$5, 37, 12, 1074);
+    			add_location(i2, file$5, 37, 12, 1075);
     			attr_dev(button2, "class", "expense-btn delete-btn");
-    			add_location(button2, file$5, 36, 8, 985);
+    			add_location(button2, file$5, 36, 8, 986);
     			attr_dev(div1, "class", "expense-button");
-    			add_location(div1, file$5, 32, 4, 803);
+    			add_location(div1, file$5, 32, 4, 804);
     			attr_dev(article, "class", "single-expense");
-    			add_location(article, file$5, 21, 0, 456);
+    			add_location(article, file$5, 21, 0, 457);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
