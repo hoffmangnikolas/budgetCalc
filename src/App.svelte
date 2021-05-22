@@ -1,12 +1,13 @@
 <script>
     //Importing element from Svelte.js library
-    import {setContext, onMount, afterUpdate} from 'svelte';
+    import { setContext, onMount, afterUpdate } from "svelte";
     //Importing prop/component to root file from component file
-    import Navbar from './Navbar.svelte';
-    import ExpenseList from './ExpenseList.svelte';
-    import Totals from './Totals.svelte';
-    import ExpenseForm from './ExpenseForm.svelte';
-    import Modal from './Modal.svelte';
+    import Navbar from "./Navbar.svelte";
+    import ExpenseList from "./ExpenseList.svelte";
+    import Totals from "./Totals.svelte";
+    import ExpenseForm from "./ExpenseForm.svelte";
+    import Modal from "./Modal.svelte";
+    import Github from "./Github.svelte";
     //import ExpenseData from './expenses';
     
     //setting up local variable to use data the user input
@@ -31,7 +32,7 @@
 
     function hideForm() {
         isFormOpen = false;
-        setName = '';
+        setName = "";
         setAmount = null;
         setId = null;
     }
